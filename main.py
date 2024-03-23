@@ -21,7 +21,9 @@ def generate_data():
            "https://www.msn.com/en-us/weather/forecast/in-Chennai,Tamil-Nadu?loc=eyJsIjoiQ2hlbm5haSIsInIiOiJUYW1pbCBOYWR1IiwiYyI6IkluZGlhIiwiaSI6IklOIiwidCI6MTAyLCJnIjoiZW4tdXMiLCJ4IjoiODAuMjAxOSIsInkiOiIxMy4wNzIxIn0%3D&ocid=ansmsnweather&weadegreetype=C",
            "https://www.msn.com/en-in/weather/forecast/in-Delhi,India?loc=eyJsIjoiRGVsaGkiLCJyIjoiRGVsaGkiLCJjIjoiSW5kaWEiLCJpIjoiSU4iLCJ0IjoxMDIsImciOiJlbi1pbiIsIngiOiI3Ny4yMzE1IiwieSI6IjI4LjY1MiJ9&weadegreetype=C&ocid=msedgntp&cvid=41714ddaec4d4b119f05991828b07e1c",
            "https://www.msn.com/en-in/weather/forecast/in-Shillong,Meghalaya?loc=eyJhIjoiTWVnaGFsYXlhIFRvdXJpc20gRGV2ZWxvcG1lbnQgQ29ycG9yYXRpb24iLCJsIjoiU2hpbGxvbmciLCJyIjoiTWVnaGFsYXlhIiwiYyI6IkluZGlhIiwiaSI6IklOIiwidCI6MTAxLCJnIjoiZW4taW4iLCJ4IjoiOTEuODgyNSIsInkiOiIyNS41Nzc3In0%3D&weadegreetype=C&ocid=msedgntp&cvid=41714ddaec4d4b119f05991828b07e1c",
-           "https://www.msn.com/en-us/weather/forecast/in-Srinagar,Jammu-%26-Kashmir?loc=eyJsIjoiU3JpbmFnYXIiLCJyIjoiSmFtbXUgJiBLYXNobWlyIiwiYyI6IkluZGlhIiwiaSI6IklOIiwidCI6MTAyLCJnIjoiZW4taW4iLCJ4IjoiNzQuODA0Mjk4NDAwODc4OSIsInkiOiIzNC4wNzE3MDEwNDk4MDQ2OSJ9&weadegreetype=C"
+           "https://www.msn.com/en-us/weather/forecast/in-Srinagar,Jammu-%26-Kashmir?loc=eyJsIjoiU3JpbmFnYXIiLCJyIjoiSmFtbXUgJiBLYXNobWlyIiwiYyI6IkluZGlhIiwiaSI6IklOIiwidCI6MTAyLCJnIjoiZW4taW4iLCJ4IjoiNzQuODA0Mjk4NDAwODc4OSIsInkiOiIzNC4wNzE3MDEwNDk4MDQ2OSJ9&weadegreetype=C",
+           "https://www.msn.com/en-in/weather/forecast/in-Bareilly,Uttar-Pradesh?loc=eyJsIjoiQmFyZWlsbHkiLCJyIjoiVXR0YXIgUHJhZGVzaCIsImMiOiJJbmRpYSIsImkiOiJJTiIsInQiOjEwMiwiZyI6ImVuLWluIiwieCI6Ijc5LjQwOTYiLCJ5IjoiMjguMzUxOCJ9&weadegreetype=C&ocid=msedgntp&cvid=d7cd4ad070ca4da2a787c2634cdb2fc4",
+           "https://www.msn.com/en-in/weather/forecast/in-Manali,Himachal-Pradesh?loc=eyJsIjoiTWFuYWxpIiwiciI6IkhpbWFjaGFsIFByYWRlc2giLCJyMiI6Ikt1bGx1IiwiYyI6IkluZGlhIiwiaSI6IklOIiwidCI6MTAyLCJnIjoiZW4taW4iLCJ4IjoiNzcuMTkyNSIsInkiOiIzMi4yOTMyIn0%3D&weadegreetype=C&ocid=msedgntp&cvid=d7cd4ad070ca4da2a787c2634cdb2fc4"
 
          ]
     options = webdriver.ChromeOptions()
@@ -85,9 +87,19 @@ def generate_data():
         sunny = float(monthly[21])
         rainsnow = float(monthly[25].replace("°",""))
         rainday = float(monthly[41].replace("°",""))
-        avgrainday = float(monthly[43].replace(' cm',''))
-        snow = float(monthly[47])
-        avgsnowday = float(monthly[49].replace(' cm',''))
+        try:
+            avgrainday = float(monthly[43].replace(' cm', ''))
+        except ValueError:
+            avgrainday = 0.25
+
+        try:
+            snow = float(monthly[47])
+        except ValueError:
+            snow = 0
+        try:
+            avgsnowday = float(monthly[49].replace(' cm',''))
+        except ValueError:
+            avgsnowday = 0.22
         seemore = driver.find_element(By.CLASS_NAME, "lifeIndexLinkButton-DS-EntryPoint1-1")
         href_value = seemore.get_attribute("href")
         driver2.get(href_value)

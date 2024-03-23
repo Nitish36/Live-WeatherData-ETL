@@ -120,4 +120,3 @@ def feed_database():
         print(x)
     print("\n")
 
-feed_database()
