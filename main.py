@@ -163,8 +163,6 @@ def generate_data():
     header = not file_exists
     # Append data to CSV
     dataset.to_csv("Weather_Data.csv", index=False, mode='a', header=header)
-    apidata = pd.read_csv("Weather_Data.csv")
     retrieved_data = scrapped_data
-
     return retrieved_data
 
