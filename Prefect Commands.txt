@@ -2,3 +2,5 @@ To build pipeline: prefect deployment build pipelines.py
 To show on browser: prefect deployment build pipelines.py:push_to_database -n weather_deployment
 Run yaml file: prefect deployment apply push_to_database-deployment.yaml
 To start the agent:  prefect agent start -q 'default'
+
+prefect cloud login -k pnu_6J1wO1EUZj1rwPufdQUMIVfUEBxKvQ3oybt0
