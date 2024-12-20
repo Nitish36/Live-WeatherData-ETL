@@ -1,14 +1,14 @@
 import requests
 import pandas as pd
 import os
-import sqlite3
 from pytz import timezone
 import gspread
 from gspread_dataframe import set_with_dataframe
 
 def weather_api_call():
     api_key = "cbd37b8290bf0a1572748518c7e55e85"
-    cities = ["bangalore", "mumbai", "hyderabad", "delhi", "gujarat", "mangalore", "assam","srinagar"]
+    cities = ["bangalore", "mumbai", "hyderabad", "delhi", "gujarat", "mangalore", "assam","srinagar","bareilly"
+              ,"meghalaya"]
     all_data = []  # To store data for all cities
 
     for city in cities:
