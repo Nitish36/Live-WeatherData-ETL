@@ -38,7 +38,7 @@ jobs:
         git commit -m "Update weather data CSV and JSON files"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token to allow the push
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # GitHub token to allow the push
 
     - name: Update Google Sheets with the new data
       run: python main.py
