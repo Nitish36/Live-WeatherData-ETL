@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main  # Trigger the action on push to the main branch, change as needed
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual trigger from the GitHub UI
 
 jobs:
   update-weather-data:
@@ -36,14 +36,12 @@ jobs:
         git config --global user.email "github-actions@github.com"
         git add datasets/WeatherData.csv datasets/WeatherData.json
         git commit -m "Update weather data CSV and JSON files"
-        git push
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token to allow the push
 
     - name: Update Google Sheets with the new data
-      run: |
-        python main.py
+      run: python main.py
       env:
         WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
         GSHEET_CONNECTION: ${{ secrets.GSHEET_CONNECTION }}
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
