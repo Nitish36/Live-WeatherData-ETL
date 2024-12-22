@@ -1,30 +1,48 @@
 name: Weather Data Workflow
 
 on:
-  workflow_dispatch: # Allows manual trigger of the workflow
-  schedule:
-    - cron: '0 9 * * *' # Runs daily at 9 AM UTC
+  push:
+    branches:
+      - main  # Trigger the action on push to the main branch, change as needed
+  workflow_dispatch:
 
 jobs:
-  run-weather-script:
+  update-weather-data:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: 3.10
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Weather Script
+    - name: Run weather data processing
+      run: python main.py
       env:
         WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
         GSHEET_CONNECTION: ${{ secrets.GSHEET_CONNECTION }}
-      run: python main.py
+
+    - name: Commit updated CSV and JSON files
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@github.com"
+        git add datasets/WeatherData.csv datasets/WeatherData.json
+        git commit -m "Update weather data CSV and JSON files"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token to allow the push
+
+    - name: Update Google Sheets with the new data
+      run: |
+        python main.py
+      env:
+        WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        GSHEET_CONNECTION: ${{ secrets.GSHEET_CONNECTION }}
