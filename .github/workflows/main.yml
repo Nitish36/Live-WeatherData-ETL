@@ -1,0 +1,30 @@
+name: Weather Data Workflow
+
+on:
+  workflow_dispatch: # Allows manual trigger of the workflow
+  schedule:
+    - cron: '0 9 * * *' # Runs daily at 9 AM UTC
+
+jobs:
+  run-weather-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Weather Script
+      env:
+        WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        GSHEET_CONNECTION: ${{ secrets.GSHEET_CONNECTION }}
+      run: python weather_script.py
