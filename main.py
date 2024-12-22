@@ -6,9 +6,11 @@ import gspread
 from gspread_dataframe import set_with_dataframe
 
 def weather_api_call():
-    api_key = "cbd37b8290bf0a1572748518c7e55e85"
-    cities = ["bangalore", "mumbai", "hyderabad", "delhi", "gujarat", "mangalore", "assam","srinagar","bareilly"
-              ,"meghalaya"]
+    api_key = os.getenv("WEATHER_API_KEY")  # Retrieve API key from environment variables
+    if not api_key:
+        raise ValueError("API key not found. Make sure WEATHER_API_KEY is set as an environment variable.")
+    
+    cities = ["bangalore", "mumbai", "hyderabad", "delhi", "gujarat", "mangalore", "assam", "srinagar", "bareilly", "meghalaya"]
     all_data = []  # To store data for all cities
 
     for city in cities:
@@ -36,18 +38,17 @@ def flatten_json(json_obj, parent_key='', sep='_'):
     return dict(items)
 
 
-
 def process_weather_data():
     all_responses = weather_api_call()
     flattened_data = [flatten_json(response) for response in all_responses]  # Flatten each city's data
     new_data = pd.DataFrame(flattened_data)  # Convert to DataFrame
-    
+
     # Convert Unix timestamp columns to IST
     ist_timezone = timezone('Asia/Kolkata')
     for col in ['dt', 'sys_sunrise', 'sys_sunset']:
         if col in new_data.columns:
             new_data[col] = pd.to_datetime(new_data[col], unit='s').dt.tz_localize('UTC').dt.tz_convert(ist_timezone)
-    
+
     # CSV Operations
     csv_file = "datasets/WeatherData.csv"
     if os.path.exists(csv_file):
@@ -68,28 +69,21 @@ def process_weather_data():
 
     print("Data successfully processed, converted to IST, and saved.")
 
-    
-    
     # Google Sheets
     GSHEET_NAME = 'Weatherfeeder'
     TAB_NAME = 'Weather'
-    credentialsPath = os.path.expanduser("credentials\\diamond-analysis-ac6758ca1ace.json")  # Create your own credentials through Google Sheet API
-    df = pd.read_csv("datasets/WeatherData.csv")  # Convert the list to a DataFrame
+    credentials_json = os.getenv("GSHEET_CONNECTION")  # Retrieve credentials from environment variables
+    if not credentials_json:
+        raise ValueError("Google Sheets credentials not found. Make sure GSHEET_CONNECTION is set as an environment variable.")
 
-    if os.path.isfile(credentialsPath):
-        # Authenticate and open the Google Sheet
-        gc = gspread.service_account(filename=credentialsPath)
-        sh = gc.open(GSHEET_NAME)
-        worksheet = sh.worksheet(TAB_NAME)
+    gc = gspread.service_account_from_dict(eval(credentials_json))  # Load credentials
+    sh = gc.open(GSHEET_NAME)
+    worksheet = sh.worksheet(TAB_NAME)
 
-        # Find the last row with data
-        last_row = len(worksheet.get_all_values()) + 1
-
-        # Append the new data below the existing data
-        set_with_dataframe(worksheet, df, row=last_row, include_index=False, include_column_header=False)
-        print("Data loaded successfully!!")
-    else:
-        print(f"Credentials file not found at {credentialsPath}")		
+    # Load data into Google Sheets
+    df = pd.read_csv(csv_file)
+    set_with_dataframe(worksheet, df)
+    print("Data loaded successfully to Google Sheets!")
 
 
 process_weather_data()
