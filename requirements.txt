@@ -3,5 +3,5 @@ pandas
 gspread
 gspread-dataframe
 pytz
-﻿fastapi~=0.110.1
-uvicorn~=0.27.1
+﻿fastapi
+uvicorn
