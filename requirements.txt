@@ -3,5 +3,4 @@ pandas
 gspread
 gspread-dataframe
 pytz
-﻿FastApi
 uvicorn
