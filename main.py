@@ -49,6 +49,10 @@ def process_weather_data():
         if col in new_data.columns:
             new_data[col] = pd.to_datetime(new_data[col], unit='s').dt.tz_localize('UTC').dt.tz_convert(ist_timezone)
 
+    # Filter columns up to 'cod'
+    if 'cod' in new_data.columns:
+        new_data = new_data.loc[:, :"cod"]
+
     # CSV Operations
     csv_file = "datasets/WeatherData.csv"
     if os.path.exists(csv_file):
@@ -80,10 +84,10 @@ def process_weather_data():
     sh = gc.open(GSHEET_NAME)
     worksheet = sh.worksheet(TAB_NAME)
 
-    # Load data into Google Sheets
-    df = pd.read_csv(csv_file)
-    set_with_dataframe(worksheet, df)
+    # Load filtered data into Google Sheets
+    set_with_dataframe(worksheet, new_data)
     print("Data loaded successfully to Google Sheets!")
+
 
 
 process_weather_data()
