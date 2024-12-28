@@ -2,7 +2,7 @@ name: Weather Data Workflow
 
 on:
   schedule:
-    - cron: '30 3 * * *'  # 9:00 AM IST (IST is UTC+5:30, so subtract 5:30 for UTC)
+    - cron: '30 4 * * *'  # 9:00 AM IST (IST is UTC+5:30, so subtract 5:30 for UTC)
     - cron: '30 16 * * *'  # 10:00 PM IST (IST is UTC+5:30, so subtract 5:30 for UTC)
   workflow_dispatch:  # Allows manual trigger from the GitHub UI
 
