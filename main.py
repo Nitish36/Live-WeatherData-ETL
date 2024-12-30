@@ -5,6 +5,18 @@ from pytz import timezone
 import gspread
 from gspread_dataframe import set_with_dataframe
 
+# Define the required column order
+COLUMN_ORDER = [
+    "coord_lon", "coord_lat", "weather[0]_id", "weather[0]_main", "weather[0]_description", 
+    "weather[0]_icon", "base", "main_temp", "main_feels_like", "main_temp_min", 
+    "main_temp_max", "main_pressure", "main_humidity", "main_sea_level", "main_grnd_level", 
+    "visibility", "wind_speed", "wind_deg", "clouds_all", "dt", "sys_type", "sys_id", 
+    "sys_country", "sys_sunrise", "sys_sunset", "timezone", "id", "name", "cod", 
+    "wind_gust", "Moon_Phase", "UV_Index", "Status", "Dew_Point", "main_temp(C)", 
+    "main_feels_like(C)", "main_temp_min(C)", "main_temp_max(C)", "Air_Quality", 
+    "Date_Recorded"
+]
+
 def weather_api_call():
     api_key = os.getenv("WEATHER_API_KEY")  # Retrieve API key from environment variables
     if not api_key:
@@ -49,9 +61,11 @@ def process_weather_data():
         if col in new_data.columns:
             new_data[col] = pd.to_datetime(new_data[col], unit='s').dt.tz_localize('UTC').dt.tz_convert(ist_timezone)
 
-    # Filter columns up to 'cod'
-    if 'cod' in new_data.columns:
-        new_data = new_data.loc[:, :"cod"]
+    # Reorder DataFrame columns to match the required order
+    for col in COLUMN_ORDER:
+        if col not in new_data.columns:
+            new_data[col] = pd.NA  # Add missing columns with NaN values
+    new_data = new_data[COLUMN_ORDER]  # Reorder columns
 
     # CSV Operations
     csv_file = "datasets/WeatherData.csv"
@@ -84,10 +98,9 @@ def process_weather_data():
     sh = gc.open(GSHEET_NAME)
     worksheet = sh.worksheet(TAB_NAME)
 
-    # Load filtered data into Google Sheets
+    # Load reordered data into Google Sheets
     set_with_dataframe(worksheet, new_data)
     print("Data loaded successfully to Google Sheets!")
-
 
 
 process_weather_data()
