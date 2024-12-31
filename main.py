@@ -63,7 +63,7 @@ def process_weather_data():
 
     # Extract the 'date' column from 'dt' if it exists
     if 'dt' in new_data.columns:
-        new_data['date'] = new_data['dt'].dt.date
+        new_data['Date_Recorded'] = new_data['dt'].dt.date
 
     # Reorder DataFrame columns to match the required order
     for col in COLUMN_ORDER:
