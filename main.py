@@ -61,6 +61,10 @@ def process_weather_data():
         if col in new_data.columns:
             new_data[col] = pd.to_datetime(new_data[col], unit='s').dt.tz_localize('UTC').dt.tz_convert(ist_timezone)
 
+    # Extract the 'date' column from 'dt' if it exists
+    if 'dt' in new_data.columns:
+        new_data['date'] = new_data['dt'].dt.date
+
     # Reorder DataFrame columns to match the required order
     for col in COLUMN_ORDER:
         if col not in new_data.columns:
@@ -101,6 +105,7 @@ def process_weather_data():
     # Load reordered data into Google Sheets
     set_with_dataframe(worksheet, new_data)
     print("Data loaded successfully to Google Sheets!")
+
 
 
 process_weather_data()
