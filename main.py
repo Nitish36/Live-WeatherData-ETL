@@ -97,13 +97,18 @@ def process_weather_data():
     credentials_json = os.getenv("GSHEET_CONNECTION")  # Retrieve credentials from environment variables
     if not credentials_json:
         raise ValueError("Google Sheets credentials not found. Make sure GSHEET_CONNECTION is set as an environment variable.")
-
+    
     gc = gspread.service_account_from_dict(eval(credentials_json))  # Load credentials
     sh = gc.open(GSHEET_NAME)
     worksheet = sh.worksheet(TAB_NAME)
-
-    # Load reordered data into Google Sheets
-    set_with_dataframe(worksheet, new_data)
+    
+    # Determine the starting row for appending data
+    existing_rows = len(worksheet.get_all_values())  # Count the existing rows
+    start_row = existing_rows + 1  # Append new data after the last row
+    
+    # Append data instead of replacing
+    set_with_dataframe(worksheet, new_data, row=start_row, include_index=False, include_column_header=False)
+    
     print("Data loaded successfully to Google Sheets!")
 
 
