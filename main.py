@@ -22,7 +22,7 @@ def weather_api_call():
     if not api_key:
         raise ValueError("API key not found. Make sure WEATHER_API_KEY is set as an environment variable.")
     
-    cities = ["bangalore", "mumbai", "hyderabad", "delhi", "gujarat", "mangalore", "assam", "srinagar", "bareilly", "meghalaya"]
+    cities = ["bangalore", "mumbai", "hyderabad", "delhi", "gujarat", "mangalore", "assam", "srinagar", "bareilly", "meghalaya","chandigarh","lucknow"]
     all_data = []  # To store data for all cities
 
     for city in cities:
